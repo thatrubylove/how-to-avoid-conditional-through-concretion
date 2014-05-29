@@ -38,11 +38,18 @@ class Carnivore < Animal
   end
 
   def eat(food)
-    if food.type == :meat && !full?
-      digest(food)
-    else
-      vomit
-    end
+    return vomit if full?
+    send("eat_#{food.type}", food)
+  end
+
+private
+
+  def eat_meat(food)
+    digest(food)
+  end
+
+  def eat_veggies(food)
+    vomit
   end
 end
 
@@ -53,11 +60,18 @@ class Herbivore < Animal
   end
 
   def eat(food)
-    if food.type == :veggies && !full?
-      digest(food)
-    else
-      vomit
-    end
+    return vomit if full?
+    send("eat_#{food.type}", food)
+  end
+
+private
+
+  def eat_meat(food)
+    vomit
+  end
+
+  def eat_veggies(food)
+    digest(food)
   end
 end
 
@@ -68,6 +82,7 @@ class Omnivore < Animal
   end
 
   def eat(food)
+    return vomit if full?
     digest(food)
   end
 end
