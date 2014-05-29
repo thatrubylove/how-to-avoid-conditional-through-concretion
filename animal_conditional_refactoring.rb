@@ -1,21 +1,12 @@
 class Animal
-  attr_reader :type, :size
-  def initialize(type, size)
-    @type = type
+  attr_reader :size
+  def initialize(size)
     @size = size
     @stomache = []
   end
 
   def eat(food)
-    if food.type == :meat && [:omnivore, :carnivore].include?(@type) &&
-                             !full?
-      digest(food)
-    elsif food.type == :veggies && [:omnivore, :herbivore].include?(@type) &&
-                                   !full?
-      digest(food)
-    else
-      vomit
-    end
+    vomit
   end
 
   def full?
@@ -40,6 +31,47 @@ private
   end
 end
 
+class Carnivore < Animal
+  def initialize(size)
+    @size = size
+    super
+  end
+
+  def eat(food)
+    if food.type == :meat && !full?
+      digest(food)
+    else
+      vomit
+    end
+  end
+end
+
+class Herbivore < Animal
+  def initialize(size)
+    @size = size
+    super
+  end
+
+  def eat(food)
+    if food.type == :veggies && !full?
+      digest(food)
+    else
+      vomit
+    end
+  end
+end
+
+class Omnivore < Animal
+  def initialize(size)
+    @size = size
+    super
+  end
+
+  def eat(food)
+    digest(food)
+  end
+end
+
 class Food
   attr_reader :type
   def initialize(type)
@@ -50,9 +82,9 @@ end
 meat = Food.new(:meat)
 vegg = Food.new(:veggies)
 
-cow = Animal.new(:herbivore, :large)
-dog = Animal.new(:omnivore, :medium)
-cat = Animal.new(:carnivore, :small)
+cow = Herbivore.new(:large)
+dog = Omnivore.new(:medium)
+cat = Carnivore.new(:small)
 
 foods   = [meat, vegg, meat, vegg, meat, vegg, meat, vegg]
 animals = [cow, dog, cat]
@@ -60,7 +92,7 @@ animals = [cow, dog, cat]
 animals.each do |animal|
   foods.each do |food|
     full = animal.full? ? "a full" : "a"
-    print "feeding #{food.type} to #{full} #{animal.size} #{animal.type}: "
+    print "feeding #{food.type} to #{full} #{animal.size} #{animal.class}: "
     puts animal.eat(food)
   end
 end
