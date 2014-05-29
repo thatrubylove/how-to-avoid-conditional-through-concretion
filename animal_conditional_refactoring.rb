@@ -3,9 +3,16 @@ class Stomache
     @contents = []
   end
 
-  def <<(val)
-    @contents.push(val)
+  def vomit
+    "baaarffff"
   end
+
+  def digest(food)
+    vomit if full?
+    @contents << food
+    "yum yum"
+  end
+
 end
 
 class LargeStomache < Stomache
@@ -35,24 +42,10 @@ class Animal
     @stomache.class.to_s
   end
 
-  def eat(food)
-    vomit
-  end
-
   def full?
     @stomache.full?
   end
 
-private
-
-  def digest(food)
-    @stomache << food
-    "yum yum"
-  end
-
-  def vomit
-    "baaarffff"
-  end
 end
 
 class Carnivore < Animal
@@ -61,18 +54,17 @@ class Carnivore < Animal
   end
 
   def eat(food)
-    return vomit if full?
     send("eat_#{food.type}", food)
   end
 
 private
 
   def eat_meat(food)
-    digest(food)
+    @stomache.digest(food)
   end
 
   def eat_veggies(food)
-    vomit
+    @stomache.vomit
   end
 end
 
@@ -82,18 +74,17 @@ class Herbivore < Animal
   end
 
   def eat(food)
-    return vomit if full?
     send("eat_#{food.type}", food)
   end
 
 private
 
   def eat_meat(food)
-    vomit
+    @stomache.vomit
   end
 
   def eat_veggies(food)
-    digest(food)
+    @stomache.digest(food)
   end
 end
 
@@ -103,8 +94,7 @@ class Omnivore < Animal
   end
 
   def eat(food)
-    return vomit if full?
-    digest(food)
+    @stomache.digest(food)
   end
 end
 
