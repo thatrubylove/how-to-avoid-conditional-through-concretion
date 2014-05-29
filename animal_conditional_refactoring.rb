@@ -8,7 +8,16 @@ class Stomache
   end
 
   def digest(food)
-    vomit if full?
+    send("digest_when_#{full?}", food)
+  end
+
+private
+
+  def digest_when_true(food)
+    vomit
+  end
+
+  def digest_when_false(food)
     @contents << food
     "yum yum"
   end
@@ -34,8 +43,8 @@ class SmallStomache < Stomache
 end
 
 class Animal
-  def initialize(size)
-    @stomache = Object.const_get("#{size.capitalize}Stomache").new
+  def initialize(stomache)
+    @stomache = stomache
   end
 
   def size
@@ -49,10 +58,6 @@ class Animal
 end
 
 class Carnivore < Animal
-  def initialize(size)
-    super
-  end
-
   def eat(food)
     send("eat_#{food.type}", food)
   end
@@ -69,10 +74,6 @@ private
 end
 
 class Herbivore < Animal
-  def initialize(size)
-    super
-  end
-
   def eat(food)
     send("eat_#{food.type}", food)
   end
@@ -89,12 +90,26 @@ private
 end
 
 class Omnivore < Animal
-  def initialize(size)
-    super
-  end
-
   def eat(food)
     @stomache.digest(food)
+  end
+end
+
+class Dog < Omnivore
+  def initialize
+    super MediumStomache.new
+  end
+end
+
+class Cow < Herbivore
+  def initialize
+    super LargeStomache.new
+  end
+end
+
+class Cat < Carnivore
+  def initialize
+    super SmallStomache.new
   end
 end
 
@@ -108,9 +123,9 @@ end
 meat = Food.new(:meat)
 vegg = Food.new(:veggies)
 
-cow = Herbivore.new(:large)
-dog = Omnivore.new(:medium)
-cat = Carnivore.new(:small)
+cow = Cow.new
+dog = Dog.new
+cat = Cat.new
 
 foods   = [meat, vegg, meat, vegg, meat, vegg, meat, vegg]
 animals = [cow, dog, cat]
